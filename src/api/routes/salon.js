@@ -1,4 +1,6 @@
 const salonRouter = require("express").Router();
+const upload = require('../../middleware/multer');
+
 const {
   asyncHandler,
   validationHandler,
@@ -18,6 +20,7 @@ salonRouter.post(
   "/create",
   // verifyJwt,
   // verifyRole("admin", "salonOwner"),
+  // upload.array('pictures'),
   asyncHandler(salonController.addSalon)
 );
 salonRouter.delete(

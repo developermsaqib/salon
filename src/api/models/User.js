@@ -90,6 +90,10 @@ const userSchema = new mongoose.Schema({
     type: String,
     default: '',
   },
+  profilePic: {
+    type: String,
+    default: '',
+  },
   salonId: [
     {
       type: mongoose.Schema.ObjectId,

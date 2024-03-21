@@ -53,8 +53,14 @@ exports.updateUser = async (req, res, next) => {
       new ErrorResponse(`User is Not Found With Id: ${req.params.id}`, 400)
     );
   }
-  const updatedUser = await userServices.update(req.params.id, req.body);
 
+  if(req.file){
+    const profilePath = `${req.file.destination}/${req.file.filename}`;
+    const profilePicUpdate = await userServices.update({_id:user._id},{profilePic:profilePath});
+  }
+  
+  const updatedUser = await userServices.update(req.params.id, req.body); 
+  
   res.status(200).json({ success: true, data: updatedUser });
 };
 
@@ -100,12 +106,16 @@ exports.registerUser = async (req, res, next) => {
   if (!user) {
     return next(new ErrorResponse(`No user found`, 400));
   }
+
+  const profilePath = `${req.file.destination}/${req.file.filename}`;
+  if(profilePath){
+    const profilePicUpload = await userServices.update({_id:user._id},{profilePic:profilePath});
+  }
+
   const token = user.getSignedJwtToken();
   const updateUser = await userServices.update({_id:user._id},{refreshToken:token});
-
   res.status(200).json({ success: true, token, data: updateUser });
 } catch (error) {
-  
   res.status(400).json({ success: false,message:error.message });
   }
   

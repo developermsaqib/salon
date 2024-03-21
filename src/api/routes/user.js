@@ -1,4 +1,5 @@
 const userRouter = require("express").Router();
+const upload = require("../../middleware/multer");
 const {
   asyncHandler,
   validationHandler,
@@ -9,6 +10,8 @@ const { userController } = require("../controllers");
 const { registerSchema, loginSchema } = require("../../validation");
 const { userServices } = require("../services");
 
+userRouter.post("/create", upload.single('profile'), asyncHandler(userController.registerUser));
+
 userRouter.get(
   "/findAll",
   verifyJwt,
@@ -17,17 +20,12 @@ userRouter.get(
 );
 
 
-
-
-
-
-
 userRouter.get("/findOne/:id", asyncHandler(userController.findOne));
-userRouter.post("/create", asyncHandler(userController.registerUser));
+
 userRouter.post("/login", asyncHandler(userController.loginUser));
 
 
-userRouter.patch("/update/:id", asyncHandler(userController.updateUser));
+userRouter.patch("/update/:id",upload.single('profile'), asyncHandler(userController.updateUser));
 userRouter.patch(
   "/updatePassword",
   asyncHandler(userController.updatePassword)

@@ -10,8 +10,8 @@ const morgan = require("morgan");
 require('./triggers/triggerEvents');
 const routes = require("./api/routes/index");
 const cors = require('cors');
-let multer = require('multer')
-let forms = multer()
+// let multer = require('multer')
+// let forms = multer()
 // middlewares
 app.use(morgan("tiny"));
 app.use(express.json());
@@ -27,7 +27,7 @@ const jwt = require('jsonwebtoken');
 
 {/* <em>// profile route after successful sign in</em>  */}
 connectDB();
-app.use(forms.any())
+// app.use(forms.any())
 app.get("/profile", (req, res) => {
  console.log(req);
  res.send("Welcome");
@@ -39,6 +39,8 @@ app.use(globalErrorHandler);
 
 app.use(routes);
 // catch all route
+
+app.use('/uploads', express.static('uploads'));
 const port = PORT || 8000;
 app.all("*", (req, res) => res.status(404).send("Page not found"));
 server.listen(port, () => console.log(`Server is running on port ${port}`));

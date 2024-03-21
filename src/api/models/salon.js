@@ -1,6 +1,5 @@
 const mongoose = require("mongoose");
-const mongoosePaginate = require('mongoose-paginate-v2');
-
+const mongoosePaginate = require("mongoose-paginate-v2");
 
 const salonSchema = new mongoose.Schema({
   name: {
@@ -9,19 +8,25 @@ const salonSchema = new mongoose.Schema({
     trim: true,
     unique: true,
   },
-  business_hours:{
-    type : mongoose.SchemaTypes.Mixed,
-    required:true
+  business_hours: {
+    type: mongoose.SchemaTypes.Mixed,
+    required: true,
   },
   address: {
     type: String,
     required: [true, "Please add an address"],
     trim: true,
   },
-  city:{
-    type:String,
-    required:true
+  city: {
+    type: String,
+    required: true,
   },
+  rating: {
+    type: Number
+  },
+  pictures: [
+      {type: String}
+  ],
   location: {
     type: {
       type: String,
@@ -50,9 +55,9 @@ const salonSchema = new mongoose.Schema({
     enum: ["active", "inactive"],
     default: "active",
   },
-  isDelete:{
-    type:Boolean,
-    default:false
+  isDelete: {
+    type: Boolean,
+    default: false,
   },
   createdAt: {
     type: Date,

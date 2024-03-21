@@ -38,6 +38,7 @@ exports.addSalon = async (req, res, next) => {
   const { id } = req.body;
   // put user id in req.body
   req.body.userId = id;
+  
   const salon = await salonServices.create(req.body);
   if (!salon) {
     return next(new ErrorResponse(`salon not created`, 400));
@@ -46,7 +47,13 @@ exports.addSalon = async (req, res, next) => {
   await userServices.update(id, {
     $push: { salonId: salon._id },
   });
-  
+
+  // if(req.files){
+  //   const paths = req.files.map(image => `${image.destination}/${image.filename}`);
+  //   console.log(paths);
+
+  // }
+
   res.status(200).json({ success: true, data: salon });
 };
 

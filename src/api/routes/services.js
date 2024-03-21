@@ -11,8 +11,8 @@ servicesRouter.get(
 servicesRouter.get("/findOne/:id", asyncHandler(servicesController.findOne));
 servicesRouter.post(
   "/create",
-  verifyJwt,
-  verifyRole("admin", "salonOwner"),
+  // verifyJwt,
+  // verifyRole("admin", "salonOwner"),
   asyncHandler(servicesController.addServices)
 );
 servicesRouter.delete(

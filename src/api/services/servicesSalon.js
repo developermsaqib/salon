@@ -2,6 +2,7 @@ const { Services } = require("../models");
 
 const services = {
   findAll: (filter,options) => Services.paginate(filter,options),
+  findMany: (filter) => Services.find(filter),
   findOne: (query) => Services.findOne(query).populate(""),
   findById: (id) => Services.findById(id).populate(""),
   create: (data) => Services.create(data),

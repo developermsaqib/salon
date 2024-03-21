@@ -9,10 +9,9 @@ const productSchema = mongoose.Schema({
   details: { type: String },
   type: { type: String },
   salon: { type: mongoose.SchemaTypes.ObjectId, ref: "Salon" },
-  isDelete: { type: Boolean, default: false },
-  createdAt: { type: Date, default: Date.now },
-  updatedAt: { type: Date, default: Date.now },
-});
+  isDelete: { type: Boolean, default: false }
+  
+},{timestamps:true});
 
 productSchema.plugin(mongoosePaginate);
 
