@@ -15,6 +15,12 @@ salonRouter.get(
   // verifyRole("admin"),
   asyncHandler(salonController.findAll)
 );
+salonRouter.get(
+  "/topSalon",
+  // verifyJwt,
+  // verifyRole("admin"),
+  asyncHandler(salonController.topSalons)
+);
 salonRouter.get("/findOne/:id", asyncHandler(salonController.findOne));
 salonRouter.post(
   "/create",

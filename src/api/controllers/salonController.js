@@ -1,6 +1,7 @@
 const { salonServices, userServices } = require("../services");
 const ErrorResponse = require("../../utils/errorResponse");
 const { User } = require("../models/user");
+const Salon = require("../models/salon");
 
 const _ = require('lodash');
 //@desc      GetAll Salon
@@ -156,3 +157,50 @@ exports.deleteServices = async (req, res, next) => {
   }
   res.status(200).json({ success: true, data: salon });
 };
+
+exports.topSalons = async (req, res) => {
+  try {
+    const topSalons = await Salon.aggregate([
+      {
+        $lookup: {
+          from: "ratings",
+          localField: "_id",
+          foreignField: "salonId",
+          as: "ratings"
+        }
+      },
+      {
+        $addFields: {
+          rating: { $avg: "$ratings.rating" },
+          ratingAndReviewsCount: { $size: "$ratings" }
+        }
+      },
+      {
+        $project: {
+          name: 1,
+          address: 1,
+          location: 1,
+          pictures: 1,
+          business_hours: 1,
+          city: 1,
+          service: 1,
+          status: 1,
+          isDelete: 1,
+          createdAt: 1,
+          updatedAt: 1,
+          rating: { $round: ["$rating", 1] },
+          ratingAndReviewsCount: 1
+        }
+      },
+      {
+        $sort: { rating: -1 }
+      },
+      {
+        $limit: 5 
+      }
+    ]);
+    res.status(200).json({status:true, topSalons})
+  } catch (error) {
+    res.status(400).json({status:false, msg:"Bad Request", error})
+  }
+}

@@ -12,6 +12,10 @@ const salonSchema = new mongoose.Schema({
     type: mongoose.SchemaTypes.Mixed,
     required: true,
   },
+  aboutUs: {
+    type: String,
+    trim: true,
+  },
   address: {
     type: String,
     required: [true, "Please add an address"],
@@ -49,6 +53,9 @@ const salonSchema = new mongoose.Schema({
   userId: {
     type: mongoose.Schema.ObjectId,
     ref: "User",
+  },
+  websiteURL: {
+    type: String,
   },
   status: {
     type: String,

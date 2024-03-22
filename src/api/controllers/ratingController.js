@@ -7,7 +7,6 @@ const mongoose = require("mongoose");
 
 exports.addRating = async (req, res) => {
   try {
-    // const rating = await ratingServices.create(req.body);
     const { rating, review, serviceId, productId, userId } = req.body;
     let salonId;
     if (serviceId) {
@@ -47,95 +46,61 @@ exports.addRating = async (req, res) => {
     });
   }
 };
-exports.addRatingToSalon = async (req, res) => {
-  try {
-    const { rating, review, serviceId, productId, userId } = req.body;
-    const addRating = await ratingServices.create(req.body);
-    if (serviceId) {
-      const salon = await Salon.findOne({
-        service: mongoose.Types.ObjectId(serviceId),
-      });
-      if (!(salon.rating >= 1)) {
-        const updateSalonRating = await Salon.updateOne(
-          { service: serviceId },
-          { $set: { rating } }
-        );
-        console.log(updateSalonRating);
-      } else {
-        const prevRating = salon.rating;
-        const avgRating = (prevRating + rating) / 2;
-        const roundRating = avgRating.toFixed(1);
-        const updateSalonRating = await Salon.updateOne(
-          { service: serviceId },
-          { $set: { rating: roundRating } }
-        );
-        console.log(updateSalonRating);
-      }
-    }
 
-    res
-      .status(201)
-      .json({ status: true, rating, review, serviceId, productId, userId });
-  } catch (error) {
-    res.status(500).json({
-      status: false,
-      msg: "Internal Server Error",
-      error: error.message,
-    });
-  }
-};
 
 exports.topSalons = async (req, res) => {
+  
   try {
-    const topSalon = await Services.aggregate([
-      {
-        $lookup: {
-          from: "ratings",
-          let: { serviceId: "$_id", productId: "$productId" },
-          pipeline: [
-            {
-              $match: {
-                $expr: {
-                  $or: [
-                    { $eq: ["$serviceId", "$$serviceId"] },
-                    { $eq: ["$productId", "$$productId"] },
-                  ],
-                },
-              },
-            },
-          ],
-          as: "ratings",
-        },
-      },
-      { $unwind: { path: "$ratings", preserveNullAndEmptyArrays: true } }, // Preserve services with no ratings
+    const topSalon = await Rating.aggregate([
       {
         $group: {
-          _id: "$salon",
-          averageRating: { $avg: "$ratings.rating" },
-        },
+          _id: "$salonId",
+          rating: { $avg: "$rating" },
+          ratingAndReviews: { $sum: 1 } 
+        }
       },
       {
-        $sort: { averageRating: -1 }, // Sort by averageRating in descending order
+        $project: {
+          rating: {$round:["$rating",1]}
+        }
       },
       {
-        $limit: 3, // Limit the result to the top salon
+        $sort: { rating: -1 }
+      },
+      {
+        $limit: 5 
       },
       {
         $lookup: {
-          from: "salons", // Assuming the collection name is "salons"
+          from: "salons", 
           localField: "_id",
           foreignField: "_id",
-          as: "salon",
-        },
+          as: "salonData"
+        }
       },
-      { $unwind: "$salon" },
-    ]);
-
-    console.log(topSalon);
-
-    console.log(topSalon);
-
-    res.json({
+      {
+        $unwind: "$salonData"
+      },
+      {
+        $project: {
+          "_id": "$salonData._id",
+          "name": "$salonData.name",
+          "address": "$salonData.address",
+          "location":"$salonData.location",
+          "pictures":"$salonData.pictures",
+          "business_hours":"$salonData.business_hours",
+          "city":"$salonData.city",
+          "service":"$salonData.service",
+          "status":"$salonData.status",
+          "isDelete":"$salonData.isDelete",
+          "createdAt":"$salonData.createdAt",
+          "updatedAt":"$salonData.updatedAt",
+          "rating": 1,
+          "ratingAndReviews": 1
+        }
+      }
+    ]);  
+    res.status(200).json({
       topSalons: topSalon,
     });
   } catch (error) {
@@ -152,10 +117,10 @@ exports.findRating = async (req, res) => {
     });
 
     const averageRating = totalRating / ratingsCollection.length;
-
-    console.log("Average Rating:", averageRating);
-    res.json({
-      salonRating: ratingsCollection,
+    ratingsCollection.rating = averageRating;
+    res.status(200).json({
+      status:true,
+      salonWithRating: ratingsCollection,
     });
   } catch (error) {
     res.json({ err: error.message });
