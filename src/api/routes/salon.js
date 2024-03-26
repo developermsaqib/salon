@@ -21,6 +21,14 @@ salonRouter.get(
   // verifyRole("admin"),
   asyncHandler(salonController.topSalons)
 );
+salonRouter.post(
+  "/add-view",
+  asyncHandler(salonController.addView)
+);
+salonRouter.get(
+  "/:salonId/views",
+  asyncHandler(salonController.showViews)
+);
 salonRouter.get("/findOne/:id", asyncHandler(salonController.findOne));
 salonRouter.post(
   "/create",

@@ -9,8 +9,10 @@ const authRouter = require("./auth");
 const deliveryRouter =require("./delivery")
 const paymentRouter =require("./payment")
 const ratingRouter =require("./rating")
+const dealRouter =require("./deal")
 
 router.use("/api/v1/rating", ratingRouter);
+router.use("/api/v1/deal", dealRouter);
 router.use("/api/v1/user", userRouter);
 router.use("/api/v1/salon", salonRouter);
 router.use("/api/v1/services", servicesRouter);

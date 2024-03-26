@@ -4,8 +4,8 @@ const { appointmentController } = require("../controllers");
 
 appointmentRouter.get(
   "/findAll",
-  verifyJwt,
-  verifyRole("admin", "customer"),
+  // verifyJwt,
+  // verifyRole("admin", "customer"),
   asyncHandler(appointmentController.getAppointments)
 );
 appointmentRouter.get(
@@ -16,8 +16,8 @@ appointmentRouter.get(
 );
 appointmentRouter.post(
   "/create",
-  verifyJwt,
-  verifyRole("admin", "customer"),
+  // verifyJwt,
+  // verifyRole("admin", "customer"),
   asyncHandler(appointmentController.createAppointment)
 );
 appointmentRouter.put(

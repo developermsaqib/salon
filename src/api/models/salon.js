@@ -57,6 +57,18 @@ const salonSchema = new mongoose.Schema({
   websiteURL: {
     type: String,
   },
+  views:[
+    {
+      userId:{
+        type: mongoose.Schema.ObjectId,
+        ref:"User"
+      },
+      timestamp:{
+        type: Date,
+        default: Date.now
+      }
+    }
+  ],
   status: {
     type: String,
     enum: ["active", "inactive"],

@@ -204,3 +204,50 @@ exports.topSalons = async (req, res) => {
     res.status(400).json({status:false, msg:"Bad Request", error})
   }
 }
+
+exports.addView = async (req, res) => {
+  const { salonId, viewerId } = req.body;
+  
+  try {
+    const salon = await Salon.findById(salonId);
+
+    if (!salon) {
+      return res.status(404).json({ success: false, message: "Salon not found" });
+    }
+
+    const existingView = salon.views.find(view => view.viewerId === viewerId);
+
+    if (existingView) {
+      return res.status(400).json({ success: false, message: "User has already viewed this salon" });
+    }
+
+    // Add new view
+    salon.views.push({ viewerId });
+    await salon.save();
+
+    return res.status(201).json({ success: true, message: "View added successfully" });
+  } catch (error) {
+    console.error("Error adding view:", error);
+    return res.status(500).json({ success: false, message: "Server error", error });
+  }
+}
+
+exports.showViews = async (req, res) => {
+  const salonId = req.params.salonId;
+
+  try {
+    const salon = await Salon.findById(salonId);
+
+    if (!salon) {
+      return res.status(404).json({ success: false, message: "Salon not found" });
+    }
+
+    const views = salon.views.length;
+
+    return res.status(200).json({ success: true, views });
+  } catch (error) {
+    console.error("Error getting views:", error);
+    return res.status(500).json({ success: false, message: "Internal Server error" });
+  }
+};
+
