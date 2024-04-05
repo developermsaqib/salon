@@ -90,6 +90,10 @@ const userSchema = new mongoose.Schema({
     type: String,
     default: '',
   },
+  calendarId: {
+    type: String,
+    default: '',
+  },
   profilePic: {
     type: String,
     default: '',

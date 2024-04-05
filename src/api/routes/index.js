@@ -10,7 +10,9 @@ const deliveryRouter =require("./delivery")
 const paymentRouter =require("./payment")
 const ratingRouter =require("./rating")
 const dealRouter =require("./deal")
+const cronofyRouter =require("./cronofy")
 
+router.use("/api/v1/cronofy", cronofyRouter);
 router.use("/api/v1/rating", ratingRouter);
 router.use("/api/v1/deal", dealRouter);
 router.use("/api/v1/user", userRouter);

@@ -1,5 +1,6 @@
 const appointmentRouter = require("express").Router();
 const { asyncHandler, verifyJwt, verifyRole } = require("../../middleware");
+const getCronofy = require("../../middleware/cronofyVerfiyAccessToken");
 const { appointmentController } = require("../controllers");
 
 appointmentRouter.get(
@@ -7,6 +8,12 @@ appointmentRouter.get(
   // verifyJwt,
   // verifyRole("admin", "customer"),
   asyncHandler(appointmentController.getAppointments)
+);
+appointmentRouter.get(
+  "/findAll/:status",
+  // verifyJwt,
+  // verifyRole("admin", "customer"),
+  asyncHandler(appointmentController.getAppointmentsByStatus)
 );
 appointmentRouter.get(
   "/findOne/:id",
@@ -18,8 +25,11 @@ appointmentRouter.post(
   "/create",
   // verifyJwt,
   // verifyRole("admin", "customer"),
+  getCronofy,
   asyncHandler(appointmentController.createAppointment)
 );
+
+appointmentRouter.post('/availability',asyncHandler(appointmentController.getAvailability));
 appointmentRouter.put(
   "/update/:id",
   verifyJwt,

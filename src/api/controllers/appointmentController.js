@@ -1,6 +1,7 @@
 const { appointmentServices } = require("../services");
 const ErrorResponse = require("../../utils/errorResponse");
 const _ = require('lodash');
+const axios = require('axios');
 
 // @desc      Get all appointments
 // @route     GET /api/v1/appointment/findAll
@@ -43,16 +44,66 @@ exports.getAppointment = async (req, res, next) => {
 
 exports.createAppointment = async (req, res, next) => {
   // get the user id from the token and put into req.body
-  req.body.customer = req.user.id;
-
+  // req.body.customer = req.user.id;
+  req.body.customer = '65d6ea6c2cab0eaa1203b50e';
   //   check the booking date is not in the past
+//Generating Event ID fn
+function generateEventID() {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, '0');
+  const day = String(now.getDate()).padStart(2, '0');
+  const hours = String(now.getHours()).padStart(2, '0');
+  const minutes = String(now.getMinutes()).padStart(2, '0');
+  const seconds = String(now.getSeconds()).padStart(2, '0');
+  const milliseconds = String(now.getMilliseconds()).padStart(3, '0');
+
+  const eventID = `E${year}${month}${day}${hours}${minutes}${seconds}${milliseconds}`;
+  
+  return eventID;
+}
+
   if (req.body.date < Date.now()) {
     return next(
       new ErrorResponse("Booking date cannot available in the past", 400)
     );
   }
+  const {date,summary,description , startDate, endDate, tzid, location} = req.body;
+  const dateObject = new Date(date);
+  const hours = dateObject.getUTCHours();
+  const minutes = dateObject.getUTCMinutes();
+  const formattedTime = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+  req.body.time = formattedTime;
+  {
+    try {
+      const eventData = {
+        "event_id": generateEventID(),
+        "summary": summary,
+        "description": description,
+        "start": startDate,
+        "end": endDate,
+        "tzid": tzid,
+        "location": {
+            "description": location
+        }
+    };
+    const response = await axios.post(
+      `https://api.cronofy.com/v1/calendars/${req.cronofyGoogleCalendarId}/events`,
+      eventData,
+      {
+          headers: {
+              'Authorization': `Bearer ${req.cronofyAccessToken}`,
+              'Content-Type': 'application/json'
+          }
+      }
+  );
+    
+  console.log(response.status);
+    } catch (error) {
+      res.status(500).json({ error: 'Failed to create event', message:error.message });
+    }
+  }
   const appointment = await appointmentServices.create(req.body);
-
   res.status(201).json({
     success: true,
     data: appointment,
@@ -97,4 +148,27 @@ exports.deleteAppointment = async (req, res, next) => {
   res
     .status(200)
     .json({ success: true, msg: "deleted successfully", data: appointment });
+};
+
+
+
+
+// Controller function to get appointments by status
+exports.getAppointmentsByStatus = async (req, res) => {
+  try {
+    const { status } = req.params; // Assuming status is passed as a route parameter
+
+    // Query appointments with the specified status
+    const appointments = await appointmentServices.findAll({ status });
+
+    // Check if appointments were found
+    if (appointments.docs.length === 0) {
+      return res.status(404).json({status:false, message: 'No appointments found with the specified status.' });
+    }
+
+    // Return the found appointments
+    res.status(200).json({ appointments });
+  } catch (error) {
+    res.status(500).json({status:false, message: 'Internal server error' });
+  }
 };
