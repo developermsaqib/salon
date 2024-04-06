@@ -1,6 +1,6 @@
 const { salonServices, userServices } = require("../services");
 const ErrorResponse = require("../../utils/errorResponse");
-const { User } = require("../models/user");
+const { User } = require("../models/User");
 const Salon = require("../models/salon");
 
 const _ = require('lodash');
