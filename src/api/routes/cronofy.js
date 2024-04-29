@@ -33,12 +33,11 @@ cronofyRouter.get("/availability", getCronofy, async (req, res) => {
     getAvailability(authToken, subId)
       .then((resp) => {
         res.status(200).json({ status: true, message: resp.data });
-    })
-    .catch((error) => {
+      })
+      .catch((error) => {
         console.log(error);
         res.status(500).json({ status: false, message: error.message });
       });
-
 
     async function getAvailability(authToken, subId) {
       const requestData = {
@@ -74,4 +73,5 @@ cronofyRouter.get("/availability", getCronofy, async (req, res) => {
     res.json({ error });
   }
 });
+
 module.exports = cronofyRouter;

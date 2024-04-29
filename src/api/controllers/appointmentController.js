@@ -1,7 +1,9 @@
 const { appointmentServices } = require("../services");
+
 const ErrorResponse = require("../../utils/errorResponse");
 const _ = require("lodash");
 const axios = require("axios");
+const { Salon } = require("../models");
 
 // @desc      Get all appointments
 // @route     GET /api/v1/appointment/findAll
@@ -109,7 +111,10 @@ exports.createAppointment = async (req, res, next) => {
     }
   }
   const appointment = await appointmentServices.create(req.body);
-
+  const salonId = appointment.salon;
+  const salon = await Salon.findById(salonId).populate("userId", "userId");
+  const salonOwnerId = salon.userId;
+  console.log("Salon Id:", salonId, "Salon Owner ID:", salonOwnerId);
   const adminNamespace = io.of("/admin");
 
   res.status(201).json({
