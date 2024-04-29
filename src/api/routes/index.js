@@ -6,13 +6,15 @@ const productRouter = require("./product");
 const stockRouter = require("./stock");
 const appointmentRouter = require("./appointment");
 const authRouter = require("./auth");
-const deliveryRouter =require("./delivery")
-const paymentRouter =require("./payment")
-const ratingRouter =require("./rating")
-const dealRouter =require("./deal")
-const cronofyRouter =require("./cronofy")
+const deliveryRouter = require("./delivery");
+const paymentRouter = require("./payment");
+const ratingRouter = require("./rating");
+const dealRouter = require("./deal");
+const cronofyRouter = require("./cronofy");
+const messageRouter = require("./message");
 
 router.use("/api/v1/cronofy", cronofyRouter);
+router.use("/api/v1/messages", messageRouter);
 router.use("/api/v1/rating", ratingRouter);
 router.use("/api/v1/deal", dealRouter);
 router.use("/api/v1/user", userRouter);
