@@ -3,7 +3,9 @@ const { appointmentServices } = require("../services");
 const ErrorResponse = require("../../utils/errorResponse");
 const _ = require("lodash");
 const axios = require("axios");
-const { Salon } = require("../models");
+const { Salon, User } = require("../models");
+const { io, getReceiverSocketId } = require("../socket/socket");
+const Notification = require("../models/notification");
 
 // @desc      Get all appointments
 // @route     GET /api/v1/appointment/findAll
@@ -112,11 +114,29 @@ exports.createAppointment = async (req, res, next) => {
   }
   const appointment = await appointmentServices.create(req.body);
   const salonId = appointment.salon;
+  console.log(salonId);
   const salon = await Salon.findById(salonId).populate("userId", "userId");
-  const salonOwnerId = salon.userId;
-  console.log("Salon Id:", salonId, "Salon Owner ID:", salonOwnerId);
+  // const salonOwnerId = salon.userId;
+  // console.log("Salon Id:", salonId, "Salon Owner ID:", salonOwnerId);
+  console.log(salon);
+  const user = await User.findOne({ salonId: salon._id });
+  console.log(user);
+  const salonOwnerId = user._id;
+  const notification = await Notification.create({
+    recipient_id: salonOwnerId,
+    // sender_id: req.user.id,
+    sender_id: "65d6ea6c2cab0eaa1203b50e",
+    content: "The New Appointment has been booked",
+    type: "appointment",
+  });
+  console.log(notification);
   const adminNamespace = io.of("/admin");
-
+  const receiverSocketId = getReceiverSocketId(salonOwnerId);
+  if (notification) {
+    adminNamespace.to(receiverSocketId).emit("newAppointment", notification);
+    console.log("Notification Sended");
+  }
+  console.log(appointment);
   res.status(201).json({
     success: true,
     data: appointment,

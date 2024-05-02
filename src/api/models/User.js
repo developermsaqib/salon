@@ -4,152 +4,155 @@ const jwt = require("jsonwebtoken");
 require("dotenv").config();
 const mongoosePaginate = require("mongoose-paginate-v2");
 //UserSchema
-const userSchema = new mongoose.Schema({
-  firstName: {
-    type: String,
-    lowercase: true,
-    trim: true,
-    default: "",
-  },
-  lastName: {
-    type: String,
-    lowercase: true,
-    trim: true,
-    default: "",
-  },
-  username: {
-    type: String,
-    default: function () {
-      return this.firstName + this.lastName;
-    },
-  },
-  email: {
-    type: String,
-    match: [
-      /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
-      "Please add a valid email",
-    ],
-    required: [true, "E-mail is Required"],
-    unique: [true, "E-mail Already Exist"],
-    lowercase: true,
-    default: function () {
-      this.google.email ? (this.email = this.google.email) : null;
-    },
-  },
-  password: {
-    type: String,
-    required: [true, "Please Add Password"],
-    minlength: 6,
-    select: false,
-  },
-  role: {
-    type: String,
-    enum: ["customer", "admin", "salonOwner", "staff"],
-    default: "customer",
-  },
-  isVerified: {
-    type: Boolean,
-    default: false,
-  },
-  isLoggedIn: {
-    type: Boolean,
-    default: false,
-  },
-  status: {
-    type: String,
-    enum: ["active", "inactive"],
-    default: "active",
-  },
-  gender: {
-    type: String,
-    enum: ["male", "female", "other"],
-    default: "male",
-  },
-  address: {
-    type: String,
-    trim: true,
-    default: "",
-  },
-  phoneNumber: {
-    type: String,
-    trim: true,
-    default: "",
-  },
-  dateOfBirth: {
-    type: Date,
-    default: "",
-  },
-  country: {
-    type: String,
-    default: "",
-  },
-  code: {
-    type: String,
-  },
-  otp: {
-    type: String,
-    default: '',
-  },
-  calendarId: {
-    type: String,
-    default: '',
-  },
-  profilePic: {
-    type: String,
-    default: '',
-  },
-  salonId: [
-    {
-      type: mongoose.Schema.ObjectId,
-      ref: "Salon",
-    },
-  ],
-  favouriteSalons:[
-    {
-      type:mongoose.Schema.ObjectId,
-      ref:"Salon"
-    }
-  ],
-  favouriteProducts:[
-    {
-      type:mongoose.Schema.ObjectId,
-      ref:"Product"
-    }
-  ],
-  method: String,
-  google: {
-    id: {
+const userSchema = new mongoose.Schema(
+  {
+    firstName: {
       type: String,
+      lowercase: true,
+      trim: true,
+      default: "",
     },
-    name: {
+    lastName: {
       type: String,
+      lowercase: true,
+      trim: true,
+      default: "",
+    },
+    username: {
+      type: String,
+      default: function () {
+        return this.firstName + this.lastName;
+      },
     },
     email: {
       type: String,
+      match: [
+        /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
+        "Please add a valid email",
+      ],
+      required: [true, "E-mail is Required"],
+      unique: [true, "E-mail Already Exist"],
+      lowercase: true,
+      default: function () {
+        this.google.email ? (this.email = this.google.email) : null;
+      },
+    },
+    password: {
+      type: String,
+      required: [true, "Please Add Password"],
+      minlength: 6,
+      select: false,
+    },
+    role: {
+      type: String,
+      enum: ["customer", "admin", "salonOwner", "staff"],
+      default: "customer",
+    },
+    isVerified: {
+      type: Boolean,
+      default: false,
+    },
+    isLoggedIn: {
+      type: Boolean,
+      default: false,
+    },
+    status: {
+      type: String,
+      enum: ["active", "inactive"],
+      default: "active",
+    },
+    gender: {
+      type: String,
+      enum: ["male", "female", "other"],
+      default: "male",
+    },
+    address: {
+      type: String,
+      trim: true,
+      default: "",
+    },
+    phoneNumber: {
+      type: String,
+      trim: true,
+      default: "",
+    },
+    dateOfBirth: {
+      type: Date,
+      default: "",
+    },
+    country: {
+      type: String,
+      default: "",
+    },
+    code: {
+      type: String,
+    },
+    otp: {
+      type: String,
+      default: "",
+    },
+    calendarId: {
+      type: String,
+      default: "",
+    },
+    profilePic: {
+      type: String,
+      default: "",
+    },
+    salonId: [
+      {
+        type: mongoose.Schema.ObjectId,
+        ref: "Salon",
+      },
+    ],
+    favouriteSalons: [
+      {
+        type: mongoose.Schema.ObjectId,
+        ref: "Salon",
+      },
+    ],
+    favouriteProducts: [
+      {
+        type: mongoose.Schema.ObjectId,
+        ref: "Product",
+      },
+    ],
+    method: String,
+    google: {
+      id: {
+        type: String,
+      },
+      name: {
+        type: String,
+      },
+      email: {
+        type: String,
+      },
+    },
+    isDelete: {
+      type: Boolean,
+      default: false,
+    },
+    isEmailVerified: {
+      type: Boolean,
+      default: false,
+    },
+    refreshToken: {
+      type: String,
+      default: "",
+    },
+    verifytoken: {
+      type: String,
+      default: "",
+    },
+
+    createdBy: {
+      type: mongoose.Schema.ObjectId,
+      ref: "User",
     },
   },
-  isDelete: {
-    type: Boolean,
-    default: false,
-  },
-  isEmailVerified: {
-    type: Boolean,
-    default: false,
-  },
-  refreshToken: {
-    type: String,
-    default: "",
-  },
-  verifytoken: {
-    type: String,
-    default: "",
-  },
-  
-  createdBy: {
-    type: mongoose.Schema.ObjectId,
-    ref: "User",
-  }
-}, {timestamps:true});
+  { timestamps: true }
+);
 
 userSchema.plugin(mongoosePaginate);
 

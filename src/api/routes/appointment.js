@@ -25,11 +25,14 @@ appointmentRouter.post(
   "/create",
   // verifyJwt,
   // verifyRole("admin", "customer"),
-  getCronofy,
+  // getCronofy,
   asyncHandler(appointmentController.createAppointment)
 );
 
-appointmentRouter.post('/availability',asyncHandler(appointmentController.getAvailability));
+appointmentRouter.post(
+  "/availability",
+  asyncHandler(appointmentController.getAvailability)
+);
 appointmentRouter.put(
   "/update/:id",
   verifyJwt,
