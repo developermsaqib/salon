@@ -12,8 +12,10 @@ const ratingRouter = require("./rating");
 const dealRouter = require("./deal");
 const cronofyRouter = require("./cronofy");
 const messageRouter = require("./message");
+const searchRouter = require("./search");
 
 router.use("/api/v1/cronofy", cronofyRouter);
+router.use("/api/v1/search", searchRouter);
 router.use("/api/v1/messages", messageRouter);
 router.use("/api/v1/rating", ratingRouter);
 router.use("/api/v1/deal", dealRouter);

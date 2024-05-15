@@ -1,14 +1,13 @@
-const mongoose = require('mongoose');
-
-
-
+const mongoose = require("mongoose");
 
 const deliverySchema = new mongoose.Schema({
-  cart: [{
-    id: String,
-    name: String,
-    price: String
-  }],
+  cart: [
+    {
+      id: String,
+      name: String,
+      price: String,
+    },
+  ],
   formData: {
     name: String,
     mail: String,
@@ -18,12 +17,7 @@ const deliverySchema = new mongoose.Schema({
     deliveryDay: String,
     deliveryTime: String,
     note: String,
-
   },
-
 });
 
-
-
-module.exports = mongoose.model('Delivery', deliverySchema);
-
+module.exports = mongoose.model("Delivery", deliverySchema);
